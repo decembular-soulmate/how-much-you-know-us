@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decembular Quiz: How Much You Know Us?</title>
+    <style>
+        :root {
+            --primary: #1565c0;
+            --bg: #0d47a1;
+            --card-bg: #e3e9f2;
+            --correct: #4caf50;
+            --wrong: #f44336;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .progress {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            min-height: 60px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background-color: #f0f7ff;
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background-color: #e8f5e9;
+            color: var(--correct);
+            font-weight: bold;
+        }
+
+        .option.wrong {
+            border-color: var(--wrong);
+            background-color: #ffebee;
+            color: var(--wrong);
+            font-weight: bold;
+        }
+
+        /* Result Section */
+        #result-screen {
+            display: none;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .btn-restart {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div id="quiz-screen">
+            <div class="header">
+                <h1>How Much You Know Us?</h1>
+                <div class="progress" id="progress">Question 1 of 10</div>
+            </div>
+            <div class="question" id="question-text">Loading question...</div>
+            <div class="options" id="options-container">
+                </div>
+        </div>
+
+        <div id="result-screen">
+            <h1>Quiz Completed!</h1>
+            <p>Your Final Score:</p>
+            <div class="score-circle">
+                <span id="score-percent">0%</span>
+            </div>
+            <p id="score-text"></p>
+            <button class="btn-restart" onclick="location.reload()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "Which of these is not the meaning of Decembular?",
+                options: ["a gentle pause before the end.", "room to breathe before the page turns.", "a permanent home where one stays forever", "the quiet stretch before a year fully lets go"],
+                correct: 2
+            },
+            {
+                q: "Who is the dream interpreter of Decembular?",
+                options: ["Cahyo", "Bima", "Surya"],
+                correct: 0
+            },
+            {
+                q: "Who is the star reader of Decembular?",
+                options: ["Cahyo", "Bima", "Surya"],
+                correct: 1
+            },
+            {
+                q: "Who is the tarot’s bearer of Decembular?",
+                options: ["Cahyo", "Bima", "Surya"],
+                correct: 2
+            },
+            {
+                q: "What zodiac season are we in right now?",
+                options: ["Sagittarius", "Capricorn"],
+                correct: 1
+            },
+            {
+                q: "Apa merk shampo Cahyo?",
+                options: ["dove", "head & shoulders", "rejoice hijab", "pantene"],
+                correct: 2
+            },
+            {
+                q: "Which of these was NOT a name for this place before it became 'Decembular'?",
+                options: ["Decemblize", "Decemblair", "Decemblaze", "Decembut"],
+                correct: 2
+            },
+            {
+                q: "Apa rasa mie kesukaan Yuya?",
+                options: ["Indomie kuah kari ayam", "Mie sedap korean spicy", "Indomie goreng rendang", "Indomie goreng original"],
+                correct: 2
+            },
+            {
+                q: "Zodiak pertama yang diramal Decembular.",
+                options: ["Gemini", "Taurus", "Sagittarius", "Capricorn"],
+                correct: 2
+            },
+            {
+                q: "Bima kalo mandi nyabunin part apa dulu?",
+                options: ["perut", "dada", "nyabunin temen", "nyabunin tetangga"],
+                correct: 2
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        const questionEl = document.getElementById('question-text');
+        const optionsEl = document.getElementById('options-container');
+        const progressEl = document.getElementById('progress');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        function loadQuestion() {
+            canAnswer = true;
+            const q = questions[currentQuestion];
+            questionEl.innerText = q.q;
+            progressEl.innerText = `Question ${currentQuestion + 1} of ${questions.length}`;
+            
+            optionsEl.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const button = document.createElement('div');
+                button.className = 'option';
+                button.innerText = opt;
+                button.onclick = () => checkAnswer(index, button);
+                optionsEl.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedIndex, element) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const correctIndex = questions[currentQuestion].correct;
+
+            if (selectedIndex === correctIndex) {
+                score++;
+                element.classList.add('correct');
+                element.innerHTML += ' <span>✓</span>';
+            } else {
+                element.classList.add('wrong');
+                element.innerHTML += ' <span>×</span>';
+                // Tunjukkan jawaban yang benar juga
+                optionsEl.children[correctIndex].classList.add('correct');
+                optionsEl.children[correctIndex].innerHTML += ' <span>✓</span>';
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1500);
+        }
+
+        function showResult() {
+            quizScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            
+            const percent = (score / questions.length) * 100;
+            document.getElementById('score-percent').innerText = percent + '%';
+            
+            let msg = "";
+            if(percent === 100) msg = "Wow! You're a true Decembular expert!";
+            else if(percent >= 70) msg = "Great job! You know us pretty well.";
+            else msg = "Keep hanging out with us to know more!";
+            
+            document.getElementById('score-text').innerText = msg;
+        }
+
+        // Start the quiz
+        loadQuestion();
+    </script>
+</body>
+</html>

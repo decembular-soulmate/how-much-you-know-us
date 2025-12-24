@@ -24,256 +24,195 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .quiz-container {
+        .card {
             background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 30px;
+            padding: 40px 30px;
+            border-radius: 40px;
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .header h1 {
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            margin-bottom: 15px;
+        }
+
+        h1 {
             color: var(--primary);
-            font-size: 22px;
-            margin-bottom: 5px;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
 
-        .progress {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .question {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 25px;
-            min-height: 60px;
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .option {
-            background: white;
+        input[type="text"] {
+            width: 100%;
             padding: 15px;
             border-radius: 15px;
             border: 2px solid #ddd;
+            font-size: 18px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            outline: none;
+            text-align: center;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 15px;
+            background-color: #c62828;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 16px;
+        }
+
+        /* Quiz Specific Styles */
+        .progress { font-size: 14px; color: #666; margin-bottom: 15px; }
+        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; min-height: 50px; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        
+        .option {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            text-align: left;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            text-align: left;
         }
 
-        .option:hover {
-            border-color: var(--primary);
-            background-color: #f0f7ff;
-        }
+        .option.correct { border-color: var(--correct); background: #e8f5e9; color: var(--correct); font-weight: bold; }
+        .option.wrong { border-color: var(--wrong); background: #ffebee; color: var(--wrong); font-weight: bold; }
 
-        .option.correct {
-            border-color: var(--correct);
-            background-color: #e8f5e9;
-            color: var(--correct);
-            font-weight: bold;
-        }
-
-        .option.wrong {
-            border-color: var(--wrong);
-            background-color: #ffebee;
-            color: var(--wrong);
-            font-weight: bold;
-        }
-
-        /* Result Section */
-        #result-screen {
-            display: none;
-        }
-
+        /* Score Screen */
         .score-circle {
-            width: 120px;
-            height: 120px;
+            width: 100px; height: 100px;
             border-radius: 50%;
             background: var(--primary);
             color: white;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin: 20px auto;
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .btn-restart {
-            margin-top: 20px;
-            padding: 12px 30px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
+            font-size: 24px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div class="quiz-container">
-        <div id="quiz-screen">
-            <div class="header">
-                <h1>How Much You Know Us?</h1>
-                <div class="progress" id="progress">Question 1 of 10</div>
-            </div>
-            <div class="question" id="question-text">Loading question...</div>
-            <div class="options" id="options-container">
-                </div>
-        </div>
+    <div class="card" id="login-screen">
+        <img src="https://raw.githubusercontent.com/decembular-soulmate/day3/main/ava.png" alt="Avatar" class="avatar">
+        <h1>💫 DECEMBULAR QUIZ 💫</h1>
+        <p>How much do you know us?</p>
+        <input type="text" id="userName" placeholder="Enter your name..." autocomplete="off">
+        <button class="btn-action" onclick="startQuiz()">Start Quiz</button>
+    </div>
 
-        <div id="result-screen">
-            <h1>Quiz Completed!</h1>
-            <p>Your Final Score:</p>
-            <div class="score-circle">
-                <span id="score-percent">0%</span>
-            </div>
-            <p id="score-text"></p>
-            <button class="btn-restart" onclick="location.reload()">Try Again</button>
-        </div>
+    <div class="card" id="quiz-screen" style="display: none;">
+        <div class="progress" id="progress">Question 1/10</div>
+        <div class="question" id="question-text">Question here?</div>
+        <div class="options" id="options-container"></div>
+    </div>
+
+    <div class="card" id="result-screen" style="display: none;">
+        <img src="https://raw.githubusercontent.com/decembular-soulmate/day3/main/ava.png" alt="Avatar" class="avatar">
+        <h1 id="congrats-text">Well Done!</h1>
+        <div class="score-circle" id="score-percent">0%</div>
+        <p id="result-msg"></p>
+        <button class="btn-action" style="background: var(--primary);" onclick="location.reload()">Try Again</button>
     </div>
 
     <script>
         const questions = [
-            {
-                q: "Which of these is not the meaning of Decembular?",
-                options: ["a gentle pause before the end.", "room to breathe before the page turns.", "a permanent home where one stays forever", "the quiet stretch before a year fully lets go"],
-                correct: 2
-            },
-            {
-                q: "Who is the dream interpreter of Decembular?",
-                options: ["Cahyo", "Bima", "Surya"],
-                correct: 0
-            },
-            {
-                q: "Who is the star reader of Decembular?",
-                options: ["Cahyo", "Bima", "Surya"],
-                correct: 1
-            },
-            {
-                q: "Who is the tarot’s bearer of Decembular?",
-                options: ["Cahyo", "Bima", "Surya"],
-                correct: 2
-            },
-            {
-                q: "What zodiac season are we in right now?",
-                options: ["Sagittarius", "Capricorn"],
-                correct: 1
-            },
-            {
-                q: "Apa merk shampo Cahyo?",
-                options: ["dove", "head & shoulders", "rejoice hijab", "pantene"],
-                correct: 2
-            },
-            {
-                q: "Which of these was NOT a name for this place before it became 'Decembular'?",
-                options: ["Decemblize", "Decemblair", "Decemblaze", "Decembut"],
-                correct: 2
-            },
-            {
-                q: "Apa rasa mie kesukaan Yuya?",
-                options: ["Indomie kuah kari ayam", "Mie sedap korean spicy", "Indomie goreng rendang", "Indomie goreng original"],
-                correct: 2
-            },
-            {
-                q: "Zodiak pertama yang diramal Decembular.",
-                options: ["Gemini", "Taurus", "Sagittarius", "Capricorn"],
-                correct: 2
-            },
-            {
-                q: "Bima kalo mandi nyabunin part apa dulu?",
-                options: ["perut", "dada", "nyabunin temen", "nyabunin tetangga"],
-                correct: 2
-            }
+            { q: "Which of these is not the meaning of Decembular?", options: ["a gentle pause before the end.", "room to breathe before the page turns.", "a permanent home where one stays forever", "the quiet stretch before a year fully lets go"], correct: 2 },
+            { q: "Who is the dream interpreter of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 0 },
+            { q: "Who is the star reader of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 1 },
+            { q: "Who is the tarot’s bearer of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 2 },
+            { q: "What zodiac season are we in right now?", options: ["Sagittarius", "Capricorn"], correct: 1 },
+            { q: "Apa merk shampo Cahyo?", options: ["dove", "head & shoulders", "rejoice hijab", "pantene"], correct: 2 },
+            { q: "Which of these was NOT a name for this place before it became 'Decembular'?", options: ["Decemblize", "Decemblair", "Decemblaze", "Decembut"], correct: 2 },
+            { q: "Apa rasa mie kesukaan Yuya?", options: ["Indomie kuah kari ayam", "Mie sedap korean spicy", "Indomie goreng rendang", "Indomie goreng original"], correct: 2 },
+            { q: "Zodiak pertama yang diramal Decembular.", options: ["Gemini", "Taurus", "Sagittarius", "Capricorn"], correct: 2 },
+            { q: "Bima kalo mandi nyabunin part apa dulu?", options: ["perut", "dada", "nyabunin temen", "nyabunin tetangga"], correct: 2 }
         ];
 
         let currentQuestion = 0;
         let score = 0;
+        let playerName = "";
         let canAnswer = true;
 
-        const questionEl = document.getElementById('question-text');
-        const optionsEl = document.getElementById('options-container');
-        const progressEl = document.getElementById('progress');
-        const quizScreen = document.getElementById('quiz-screen');
-        const resultScreen = document.getElementById('result-screen');
+        function startQuiz() {
+            playerName = document.getElementById('userName').value;
+            if (playerName.trim() === "") {
+                alert("Please enter your name!");
+                return;
+            }
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            loadQuestion();
+        }
 
         function loadQuestion() {
             canAnswer = true;
             const q = questions[currentQuestion];
-            questionEl.innerText = q.q;
-            progressEl.innerText = `Question ${currentQuestion + 1} of ${questions.length}`;
+            document.getElementById('progress').innerText = `Question ${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('question-text').innerText = q.q;
             
-            optionsEl.innerHTML = '';
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
             q.options.forEach((opt, index) => {
-                const button = document.createElement('div');
-                button.className = 'option';
-                button.innerText = opt;
-                button.onclick = () => checkAnswer(index, button);
-                optionsEl.appendChild(button);
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerText = opt;
+                div.onclick = () => checkAnswer(index, div);
+                container.appendChild(div);
             });
         }
 
-        function checkAnswer(selectedIndex, element) {
+        function checkAnswer(selected, element) {
             if (!canAnswer) return;
             canAnswer = false;
 
-            const correctIndex = questions[currentQuestion].correct;
+            const correct = questions[currentQuestion].correct;
+            const container = document.getElementById('options-container');
 
-            if (selectedIndex === correctIndex) {
+            if (selected === correct) {
                 score++;
                 element.classList.add('correct');
                 element.innerHTML += ' <span>✓</span>';
             } else {
                 element.classList.add('wrong');
                 element.innerHTML += ' <span>×</span>';
-                // Tunjukkan jawaban yang benar juga
-                optionsEl.children[correctIndex].classList.add('correct');
-                optionsEl.children[correctIndex].innerHTML += ' <span>✓</span>';
+                container.children[correct].classList.add('correct');
+                container.children[correct].innerHTML += ' <span>✓</span>';
             }
 
             setTimeout(() => {
                 currentQuestion++;
-                if (currentQuestion < questions.length) {
-                    loadQuestion();
-                } else {
-                    showResult();
-                }
-            }, 1500);
+                if (currentQuestion < questions.length) loadQuestion();
+                else showResult();
+            }, 1200);
         }
 
         function showResult() {
-            quizScreen.style.display = 'none';
-            resultScreen.style.display = 'block';
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
             
-            const percent = (score / questions.length) * 100;
-            document.getElementById('score-percent').innerText = percent + '%';
-            
-            let msg = "";
-            if(percent === 100) msg = "Wow! You're a true Decembular expert!";
-            else if(percent >= 70) msg = "Great job! You know us pretty well.";
-            else msg = "Keep hanging out with us to know more!";
-            
-            document.getElementById('score-text').innerText = msg;
+            const finalScore = (score / questions.length) * 100;
+            document.getElementById('score-percent').innerText = finalScore + "%";
+            document.getElementById('congrats-text').innerText = `Great Job, ${playerName}!`;
+            document.getElementById('result-msg').innerText = `You answered ${score} out of 10 questions correctly.`;
         }
-
-        // Start the quiz
-        loadQuestion();
     </script>
 </body>
 </html>

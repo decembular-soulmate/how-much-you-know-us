@@ -7,6 +7,7 @@
     <style>
         :root {
             --primary: #1565c0;
+            --accent-red: #c62828; /* Warna merah sesuai tombol */
             --bg: #0d47a1;
             --card-bg: #e3e9f2;
             --correct: #4caf50;
@@ -67,7 +68,7 @@
         .btn-action {
             width: 100%;
             padding: 15px;
-            background-color: #c62828;
+            background-color: var(--accent-red);
             color: white;
             border: none;
             border-radius: 15px;
@@ -107,7 +108,7 @@
         .score-circle {
             width: 110px; height: 110px;
             border-radius: 50%;
-            background: var(--primary);
+            background: var(--accent-red); /* Warna Merah */
             color: white;
             display: flex;
             justify-content: center;
@@ -124,7 +125,7 @@
     <div class="card" id="login-screen">
         <img src="https://raw.githubusercontent.com/decembular-soulmate/day3/main/ava.png" alt="Avatar" class="avatar">
         <h1>How Much You Know Us?</h1>
-        <p>Decembular Thing</p>
+        <p>Pertanyaan receh pencet pencet doang...</p>
         <input type="text" id="userName" placeholder="Type your name here..." autocomplete="off">
         <button class="btn-action" onclick="startQuiz()">Start Quiz</button>
     </div>
@@ -140,7 +141,7 @@
         <h1 id="congrats-text">Result</h1>
         <div class="score-circle" id="score-percent">0%</div>
         <p id="result-msg"></p>
-        <button class="btn-action" style="background: var(--primary);" onclick="location.reload()">Try Again</button>
+        <p style="font-size: 12px; color: #888; margin-top: 20px;">Terima kasih sudah berpartisipasi!</p>
     </div>
 
     <script>
@@ -205,7 +206,6 @@
             } else {
                 element.classList.add('wrong');
                 element.querySelector('.icon').innerText = '×';
-                // Tunjukkan yang benar
                 container.children[correct].classList.add('correct');
                 container.children[correct].querySelector('.icon').innerText = '✓';
             }

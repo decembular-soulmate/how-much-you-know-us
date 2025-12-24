@@ -26,7 +26,7 @@
 
         .card {
             background-color: var(--card-bg);
-            padding: 40px 30px;
+            padding: 35px 25px;
             border-radius: 40px;
             width: 100%;
             max-width: 400px;
@@ -45,16 +45,19 @@
 
         h1 {
             color: var(--primary);
-            font-size: 24px;
+            font-size: 22px;
             margin-bottom: 10px;
+            text-transform: uppercase;
         }
+
+        p { color: #555; margin-bottom: 20px; }
 
         input[type="text"] {
             width: 100%;
             padding: 15px;
             border-radius: 15px;
             border: 2px solid #ddd;
-            font-size: 18px;
+            font-size: 16px;
             box-sizing: border-box;
             margin-bottom: 20px;
             outline: none;
@@ -71,30 +74,38 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
+            transition: 0.2s;
         }
 
-        /* Quiz Specific Styles */
-        .progress { font-size: 14px; color: #666; margin-bottom: 15px; }
-        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; min-height: 50px; }
+        .btn-action:active { transform: scale(0.98); }
+
+        /* Quiz Styles */
+        .progress { font-size: 13px; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #333; min-height: 50px; }
         .options { display: flex; flex-direction: column; gap: 10px; }
         
         .option {
             background: white;
-            padding: 12px;
+            padding: 14px;
             border-radius: 12px;
             border: 2px solid #ddd;
             cursor: pointer;
             text-align: left;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            transition: 0.2s;
         }
 
         .option.correct { border-color: var(--correct); background: #e8f5e9; color: var(--correct); font-weight: bold; }
         .option.wrong { border-color: var(--wrong); background: #ffebee; color: var(--wrong); font-weight: bold; }
 
-        /* Score Screen */
+        .icon { font-size: 18px; }
+
+        /* Score Section */
         .score-circle {
-            width: 100px; height: 100px;
+            width: 110px; height: 110px;
             border-radius: 50%;
             background: var(--primary);
             color: white;
@@ -102,8 +113,9 @@
             justify-content: center;
             align-items: center;
             margin: 20px auto;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
+            border: 5px solid #fff;
         }
     </style>
 </head>
@@ -111,21 +123,21 @@
 
     <div class="card" id="login-screen">
         <img src="https://raw.githubusercontent.com/decembular-soulmate/day3/main/ava.png" alt="Avatar" class="avatar">
-        <h1>💫 DECEMBULAR QUIZ 💫</h1>
-        <p>How much do you know us?</p>
-        <input type="text" id="userName" placeholder="Enter your name..." autocomplete="off">
+        <h1>How Much You Know Us?</h1>
+        <p>Decembular Thing</p>
+        <input type="text" id="userName" placeholder="Type your name here..." autocomplete="off">
         <button class="btn-action" onclick="startQuiz()">Start Quiz</button>
     </div>
 
     <div class="card" id="quiz-screen" style="display: none;">
         <div class="progress" id="progress">Question 1/10</div>
-        <div class="question" id="question-text">Question here?</div>
+        <div class="question" id="question-text">Loading...</div>
         <div class="options" id="options-container"></div>
     </div>
 
     <div class="card" id="result-screen" style="display: none;">
         <img src="https://raw.githubusercontent.com/decembular-soulmate/day3/main/ava.png" alt="Avatar" class="avatar">
-        <h1 id="congrats-text">Well Done!</h1>
+        <h1 id="congrats-text">Result</h1>
         <div class="score-circle" id="score-percent">0%</div>
         <p id="result-msg"></p>
         <button class="btn-action" style="background: var(--primary);" onclick="location.reload()">Try Again</button>
@@ -134,15 +146,15 @@
     <script>
         const questions = [
             { q: "Which of these is not the meaning of Decembular?", options: ["a gentle pause before the end.", "room to breathe before the page turns.", "a permanent home where one stays forever", "the quiet stretch before a year fully lets go"], correct: 2 },
-            { q: "Who is the dream interpreter of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 0 },
+            { q: "Who is the dream interpreter of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 2 },
             { q: "Who is the star reader of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 1 },
-            { q: "Who is the tarot’s bearer of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 2 },
+            { q: "Who is the tarot’s bearer of Decembular?", options: ["Cahyo", "Bima", "Surya"], correct: 0 },
             { q: "What zodiac season are we in right now?", options: ["Sagittarius", "Capricorn"], correct: 1 },
-            { q: "Apa merk shampo Cahyo?", options: ["dove", "head & shoulders", "rejoice hijab", "pantene"], correct: 2 },
+            { q: "Apa merk shampo Cahyo?", options: ["dove", "head & shoulders", "rejoice hijab", "pantene"], correct: 1 },
             { q: "Which of these was NOT a name for this place before it became 'Decembular'?", options: ["Decemblize", "Decemblair", "Decemblaze", "Decembut"], correct: 2 },
             { q: "Apa rasa mie kesukaan Yuya?", options: ["Indomie kuah kari ayam", "Mie sedap korean spicy", "Indomie goreng rendang", "Indomie goreng original"], correct: 2 },
             { q: "Zodiak pertama yang diramal Decembular.", options: ["Gemini", "Taurus", "Sagittarius", "Capricorn"], correct: 2 },
-            { q: "Bima kalo mandi nyabunin part apa dulu?", options: ["perut", "dada", "nyabunin temen", "nyabunin tetangga"], correct: 2 }
+            { q: "Bima kalo mandi nyabunin part apa dulu?", options: ["perut", "dada", "nyabunin temen", "nyabunin tetangga"], correct: 1 }
         ];
 
         let currentQuestion = 0;
@@ -173,7 +185,7 @@
             q.options.forEach((opt, index) => {
                 const div = document.createElement('div');
                 div.className = 'option';
-                div.innerText = opt;
+                div.innerHTML = `<span>${opt}</span><span class="icon"></span>`;
                 div.onclick = () => checkAnswer(index, div);
                 container.appendChild(div);
             });
@@ -189,19 +201,20 @@
             if (selected === correct) {
                 score++;
                 element.classList.add('correct');
-                element.innerHTML += ' <span>✓</span>';
+                element.querySelector('.icon').innerText = '✓';
             } else {
                 element.classList.add('wrong');
-                element.innerHTML += ' <span>×</span>';
+                element.querySelector('.icon').innerText = '×';
+                // Tunjukkan yang benar
                 container.children[correct].classList.add('correct');
-                container.children[correct].innerHTML += ' <span>✓</span>';
+                container.children[correct].querySelector('.icon').innerText = '✓';
             }
 
             setTimeout(() => {
                 currentQuestion++;
                 if (currentQuestion < questions.length) loadQuestion();
                 else showResult();
-            }, 1200);
+            }, 1500);
         }
 
         function showResult() {
@@ -210,8 +223,8 @@
             
             const finalScore = (score / questions.length) * 100;
             document.getElementById('score-percent').innerText = finalScore + "%";
-            document.getElementById('congrats-text').innerText = `Great Job, ${playerName}!`;
-            document.getElementById('result-msg').innerText = `You answered ${score} out of 10 questions correctly.`;
+            document.getElementById('congrats-text').innerText = `Well Done, ${playerName}!`;
+            document.getElementById('result-msg').innerText = `You got ${score} out of 10 points.`;
         }
     </script>
 </body>
